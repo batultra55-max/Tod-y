@@ -211,12 +211,18 @@
             }
         }
 
-        // 🛡️ [تحديث محرك البث الخارق]: تفعيل استراتيجية الحماية الثلاثية ضد ضعف الإنترنت الشديد
+        // 🛡️ [تحديث محرك البث الخارق]: تفعيل استراتيجية الحماية الثلاثية + تخطي قيود HTTPS
         let hls = null;
         function playStream(url) {
             document.getElementById('player-container').style.display = 'block';
             const video = document.getElementById('videoPlayer');
             if (hls) hls.destroy();
+
+            // 🚀 حيلة تخطي قيود GitHub Pages: إذا كان الرابط غير آمن والموقع يعمل على HTTPS، يتم تحويله عبر بروكسي وسيط آمن
+            if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+                console.log("تم رصد محتوى مختلط! جاري تشغيل البروكسي الآمن لتخطي الحظر...");
+                url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+            }
 
             if (Hls.isSupported()) {
                 hls = new Hls({
