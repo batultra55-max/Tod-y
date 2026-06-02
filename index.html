@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOD-Y</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        :root { --bg: #06090e; --card: #111622; --accent: #00e676; --text: #fff; --muted: #8b9bb4; --danger: #e61e50; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; background: #0b0f17; border-bottom: 1px solid #1a2233; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: 900; color: var(--accent); cursor: pointer; }
+        .menu-btn { font-size: 26px; cursor: pointer; }
+        .main-container { padding: 20px 4%; max-width: 1600px; margin: 0 auto; }
+        .section-title { font-size: 19px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        .back-btn { font-size: 13px; background: #24314b; padding: 5px 10px; border-radius: 6px; cursor: pointer; color: var(--accent); }
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+        @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #1a2233; transition: 0.2s; cursor: pointer; text-align: center; }
+        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+        .card-img { width: 100%; aspect-ratio: 16/10; background: #0b0f17; display: flex; align-items: center; justify-content: center; font-size: 28px; object-fit: cover; }
+        .card-title { padding: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4,6,10,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 15px; }
+        .modal-content { background: var(--card); border: 1px solid #24314b; padding: 20px; border-radius: 12px; width: 100%; max-width: 500px; }
+        input { width: 100%; padding: 10px; background: #0b0f17; border: 1px solid #1a2233; border-radius: 6px; color: #fff; margin-bottom: 10px; }
+        .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-danger { background: var(--danger); color: #fff; }
+        .btn-secondary { background: #24314b; color: #fff; }
+        .dev-list { max-height: 150px; overflow-y: auto; background: #0b0f17; padding: 8px; border-radius: 6px; border: 1px solid #1a2233; margin-top: 5px; }
+        .dev-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1a2233; font-size: 12px; }
+        .dev-item input { width: auto; margin: 0; }
+        
+        /* 📺 ترقية وتجميل واجهة مشغل الفيديوهات الاحترافي */
+        #player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; animation: fadeIn 0.3s ease; }
+        video { width: 100%; height: 100%; background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8); object-fit: contain; }
+        .close-player { position: absolute; top: 25px; right: 25px; background: rgba(230, 30, 80, 0.85); color: #fff; padding: 10px 20px; border-radius: 30px; cursor: pointer; z-index: 2101; font-weight: bold; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(230,30,80,0.4); border: 1px solid rgba(255,255,255,0.1); }
+        .close-player:hover { background: var(--danger); transform: scale(1.05); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo" onclick="backToCats()">TOD-Y</div>
+        <div class="menu-btn" onclick="openModal('authModal')">☰</div>
+    </div>
+
+    <div class="main-container" id="appContent">
+        <div class="section-title">جاري الاتصال بالسحاب ومزامنة قنواتك الثابتة...</div>
+    </div>
+
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:10px; color:var(--accent)">🔐 الوضع الآمن</h3>
+            <input type="password" id="secureCode" placeholder="أدخل رمز المطور السرّي">
+            <button class="btn btn-primary" onclick="verifyCode()">دخول</button>
+            <button class="btn btn-secondary" onclick="closeModal('authModal')">إلغاء</button>
+        </div>
+    </div>
+
+    <div class="modal" id="developerModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:10px; color:var(--accent)">🛠️ لوحة المطور</h3>
+            <input type="text" id="xtreamHost" placeholder="رابط الـ Host">
+            <input type="text" id="xtreamUser" placeholder="اسم المستخدم">
+            <input type="text" id="xtreamPass" placeholder="كلمة المرور">
+            <button class="btn btn-primary" onclick="fetchXtream()">سحب وتحديث السيرفر اللحظي</button>
+            
+            <div style="margin-top: 10px;">
+                <h5 style="color:var(--muted); margin-bottom:5px;">📁 حذف وتصفية المجلدات (تحديد جماعي):</h5>
+                <button class="btn btn-danger" style="padding:5px; font-size:12px;" onclick="deleteSelectedCats()">حذف المجلدات المحددة 🗑️</button>
+                <div class="dev-list" id="devCatList"></div>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <h5 style="color:var(--muted); margin-bottom:5px;">📺 حذف قنوات فردية (لا تعجبك):</h5>
+                <div class="dev-list" id="devChanList"></div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="closeModal('developerModal')" style="margin-top: 10px;">إغلاق</button>
+        </div>
+    </div>
+
+    <div id="player-container">
+        <div class="close-player" onclick="closePlayer()">إغلاق البث ✖</div>
+        <video id="videoPlayer" controls autoplay playsinline preload="auto"></video>
+    </div>
+
+    <script>
+        const firebaseConfig = { databaseURL: "https://yall-taoaqo3-default-rtdb.firebaseio.com/" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let globalAppData = { categories: {}, channels: [] };
+        let currentView = "categories";
+        let activeCatId = null;
+
+        function loadSavedDataOnStartup() {
+            db.ref('tody_stream_data').once('value').then((snapshot) => {
+                const data = snapshot.val();
+                if (data) { globalAppData = data; renderAppUI(); }
+                else { document.getElementById('appContent').innerHTML = `<div class="section-title" style="text-align:center; display:block; padding-top:50px;">📺 السيرفر السحابي فارغ، يرجى الدخول للوحة المطور وضخ قنوات الـ Xtream لأول مرة.</div>`; }
+            }).catch(e => {
+                document.getElementById('appContent').innerHTML = `<div class="section-title" style="text-align:center; display:block; padding-top:50px;">⚠️ أمان المتصفح يحظر الجلب التلقائي المحلي! يرجى رفع الملف على استضافة مجانية لتفعيل المزامنة السحابية.</div>`;
+            });
+        }
+
+        window.onload = loadSavedDataOnStartup;
+
+        db.ref('tody_stream_data').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) { globalAppData = data; renderAppUI(); if(document.getElementById('developerModal').style.display === 'flex') renderDevLists(); }
+        });
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function verifyCode() {
+            if (document.getElementById('secureCode').value === "V555") {
+                closeModal('authModal'); document.getElementById('secureCode').value = "";
+                openModal('developerModal'); renderDevLists();
+            } else { alert("الرمز خاطئ!"); }
+        }
+
+        async function fetchXtream() {
+            const host = document.getElementById('xtreamHost').value.trim();
+            const user = document.getElementById('xtreamUser').value.trim();
+            const pass = document.getElementById('xtreamPass').value.trim();
+            if(!host || !user || !pass) return alert("املاً جميع الحقول!");
+
+            try {
+                const [catRes, chanRes] = await Promise.all([
+                    fetch(`${host}/player_api.php?username=${user}&password=${pass}&action=get_live_categories`).then(r => r.json()),
+                    fetch(`${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`).then(r => r.json())
+                ]);
+
+                let structuredCats = {};
+                catRes.forEach(c => structuredCats[c.category_id] = { name: c.category_name, visible: true });
+
+                let filteredChans = chanRes.map(ch => ({
+                    id: ch.stream_id, name: ch.name, catId: ch.category_id,
+                    icon: ch.stream_icon || '📺', url: `${host}/live/${user}/${pass}/${ch.stream_id}.m3u8`, visible: true
+                }));
+
+                globalAppData = { categories: structuredCats, channels: filteredChans };
+                currentView = "categories";
+                db.ref('tody_stream_data').set(globalAppData);
+                alert("تم رفع القنوات بنجاح وتثبيتها في الـ Firebase! 🚀");
+            } catch (e) { alert("فشل جلب البيانات من السيرفر!"); }
+        }
+
+        function renderAppUI() {
+            const container = document.getElementById('appContent'); container.innerHTML = "";
+            if (currentView === "categories") {
+                const title = document.createElement('div'); title.className = 'section-title'; title.innerText = "📁 المجلدات المتوفرة"; container.appendChild(title);
+                const grid = document.createElement('div'); grid.className = 'grid-layout';
+                for (let id in globalAppData.categories) {
+                    if (!globalAppData.categories[id].visible) continue;
+                    const count = globalAppData.channels.filter(ch => ch.catId == id && ch.visible !== false).length;
+                    if (count === 0) continue;
+                    const card = document.createElement('div'); card.className = 'card';
+                    card.onclick = () => { activeCatId = id; currentView = "channels"; renderAppUI(); };
+                    card.innerHTML = `<div class="card-img">📁</div><div class="card-title">${globalAppData.categories[id].name}<br><span style="color:var(--muted); font-size:10px;">${count} قناة</span></div>`;
+                    grid.appendChild(card);
+                }
+                container.appendChild(grid);
+            } else {
+                const header = document.createElement('div'); header.className = 'section-title'; header.innerHTML = `<span>📺 قنوات المجلد</span><span class="back-btn" onclick="backToCats()">⬅ عودة</span>`; container.appendChild(header);
+                const grid = document.createElement('div'); grid.className = 'grid-layout';
+                globalAppData.channels.filter(ch => ch.catId == activeCatId && ch.visible !== false).forEach(chan => {
+                    const card = document.createElement('div'); card.className = 'card'; card.onclick = () => playStream(chan.url);
+                    const img = chan.icon.startsWith('http') ? `<img src="${chan.icon}" class="card-img" onerror="this.src='📺'">` : `<div class="card-img">📺</div>`;
+                    card.innerHTML = `${img}<div class="card-title">${chan.name}</div>`; grid.appendChild(card);
+                });
+                container.appendChild(grid);
+            }
+        }
+
+        function backToCats() { currentView = "categories"; activeCatId = null; renderAppUI(); }
+
+        function renderDevLists() {
+            const catBox = document.getElementById('devCatList'); const chanBox = document.getElementById('devChanList');
+            catBox.innerHTML = ""; chanBox.innerHTML = "";
+            for (let id in globalAppData.categories) {
+                if (!globalAppData.categories[id].visible) continue;
+                catBox.innerHTML += `<div class="dev-item"><input type="checkbox" class="cat-del-chk" value="${id}"> <span>📁 ${globalAppData.categories[id].name}</span></div>`;
+            }
+            globalAppData.channels.filter(ch => ch.visible !== false).forEach(ch => {
+                const item = document.createElement('div'); item.className = 'dev-item'; item.style.justifyContent = 'space-between';
+                item.innerHTML = `<span>📺 ${ch.name}</span><button onclick="deleteSingleChannel('${ch.id}')" style="background:var(--danger); border:none; color:#fff; padding:2px 6px; border-radius:4px; cursor:pointer; font-size:10px;">حذف ✖</button>`;
+                chanBox.appendChild(item);
+            });
+        }
+
+        function deleteSelectedCats() {
+            const checked = document.querySelectorAll('.cat-del-chk:checked'); if(checked.length === 0) return alert("حدد مجلداً أولاً!");
+            if(confirm("حذف المجلدات المحددة؟")) {
+                checked.forEach(cb => globalAppData.categories[cb.value].visible = false);
+                backToCats(); db.ref('tody_stream_data').set(globalAppData);
+            }
+        }
+
+        function deleteSingleChannel(chanId) {
+            if(confirm("هل أنت متأكد من حذف هذه القناة نهائياً؟")) {
+                const idx = globalAppData.channels.findIndex(ch => ch.id == chanId);
+                if(idx !== -1) { globalAppData.channels[idx].visible = false; db.ref('tody_stream_data').set(globalAppData); }
+            }
+        }
+
+        // 🛡️ [تحديث محرك البث الخارق]: تفعيل استراتيجية الحماية الثلاثية ضد ضعف الإنترنت الشديد
+        let hls = null;
+        function playStream(url) {
+            document.getElementById('player-container').style.display = 'block';
+            const video = document.getElementById('videoPlayer');
+            if (hls) hls.destroy();
+
+            if (Hls.isSupported()) {
+                hls = new Hls({
+                    // 1. زيادة الذاكرة المؤقتة الذكية لامتصاص تذبذب سرعة الإنترنت
+                    maxBufferLength: 50,         // الاحتفاظ بـ 50 ثانية مستمرة مخزنة مسبقاً داخل المعالج
+                    maxMaxBufferLength: 100,     // أقصى سعة تخزين مؤقت احتياطي تصل إلى 100 ثانية للتحميل الثقيل
+                    
+                    // 2. تفعيل معالجة الخلفية وخفض وقت التأخير للاستقرار
+                    enableWorker: true,          // فك الشفرة البرمجية عبر خيوط معالجة منفصلة لمنع تجمد الصورة (Freezing)
+                    lowLatencyMode: false,       // تعطيل ميزة زمن التأخير المنخفض ليعطي الأولوية القصوى "لثبات وثقل البث" بدلاً من السرعة
+                    
+                    // 3. سياسة التكيّف شديدة العدوانية مع الإنترنت الضعيف
+                    abrEwmaDefaultEstimate: 50000, // إجبار المشغل على تخمين سرعة ضعيفة جداً افتراضياً ليعمل البث فوراً ولا ينتظر طويلاً
+                    backBufferLength: 30         // حماية أجزاء البث السابقة لمنع حدوث البكسلة المفاجئة
+                });
+
+                hls.loadSource(url);
+                hls.attachMedia(video);
+
+                // 🔄 بروتوكول التعافي الذاتي والقسري من الأخطاء والضغط العالي (Self-Healing Mechanism)
+                hls.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                console.log("هبوط في الإنترنت أو السيرفر، جاري المحاولة القسرية لتخطي الخطأ دون توقف...");
+                                hls.startLoad(); // إعادة جلب البيانات فوراً دون إظهار علامة تحميل للمستخدم
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                console.log("خطأ في تدفق الميديا، جاري تنقية البث برمجياً ومتابعة العرض...");
+                                hls.recoverMediaError(); // التعافي اللحظي ومتابعة فك البث
+                                break;
+                            default:
+                                console.log("خطأ غير متوقع، جاري إنعاش المحرك ذاتياً...");
+                                hls.destroy();
+                                playStream(url); // إعادة بناء الجلسة في أجزاء من الثانية رغماً عن الظروف
+                                break;
+                        }
+                    }
+                });
+            } 
+            // دعم الهواتف الذكية ومتصفحات Safari التي تدعم HLS داخلياً
+            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = url;
+            }
+        }
+
+        function closePlayer() {
+            const video = document.getElementById('videoPlayer');
+            video.pause();
+            if (hls) { hls.destroy(); hls = null; }
+            video.src = "";
+            document.getElementById('player-container').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
