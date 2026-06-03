@@ -12,7 +12,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; background: #0b0f17; border-bottom: 1px solid #1a2233; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--accent); cursor: pointer; }
+        .logo { font-size: 24px; font-weight: 900; color: var(--text); cursor: pointer; }
+        .logo span { color: var(--accent); }
         .menu-btn { font-size: 26px; cursor: pointer; }
         .main-container { padding: 20px 4%; max-width: 1600px; margin: 0 auto; }
         .section-title { font-size: 19px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
@@ -34,7 +35,7 @@
         .dev-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1a2233; font-size: 12px; }
         .dev-item input { width: auto; margin: 0; }
         
-        /* 📺 واجهة مشغل الفيديوهات الاحترافي */
+        /* 📺 واجهة مشغل الفيديوهات الاحترافي المحمية */
         #player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; animation: fadeIn 0.3s ease; }
         video { width: 100%; height: 100%; background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8); object-fit: contain; }
         .close-player { position: absolute; top: 25px; right: 25px; background: rgba(230, 30, 80, 0.85); color: #fff; padding: 10px 20px; border-radius: 30px; cursor: pointer; z-index: 2101; font-weight: bold; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(230,30,80,0.4); border: 1px solid rgba(255,255,255,0.1); }
@@ -45,7 +46,7 @@
 <body>
 
     <div class="navbar">
-        <div class="logo" onclick="backToCats()">TOD-Y</div>
+        <div class="logo" onclick="backToCats()">TOD-<span>Y</span></div>
         <div class="menu-btn" onclick="openModal('authModal')">☰</div>
     </div>
 
@@ -174,7 +175,8 @@
                 globalAppData.channels.filter(ch => ch.catId == activeCatId && ch.visible !== false).forEach(chan => {
                     const card = document.createElement('div'); card.className = 'card'; card.onclick = () => playStream(chan.url);
                     const img = chan.icon.startsWith('http') ? `<img src="${chan.icon}" class="card-img" onerror="this.src='📺'">` : `<div class="card-img">📺</div>`;
-                    card.innerHTML = `${img}<div class="card-title">${chan.name}</div>`; grid.appendChild(card);
+                    card.innerHTML = `${img}<div class="card-title">${chan.name}</div>`;
+                    grid.appendChild(card);
                 });
                 container.appendChild(grid);
             }
@@ -211,63 +213,15 @@
             }
         }
 
-        // 🛡️ [محرك البث الفولاذي المطور]: تكوين مضاد للتقطيع مع التفعيل الإجباري لشريط التحكم
+        // 🛡️ [بروتوكول الإرسال الخارجي الإجباري]: تخطي المتصفحات بالكامل وتشغيل فوري بملء الشاشة
         let hls = null;
         function playStream(url) {
-            if (confirm("هل تريد تشغيل القناة في مشغل خارجي (مثل VLC/MX) لضمان ثبات خارق بدون قيود متصفح؟")) {
-                window.location.href = url; 
-                return;
-            }
-
-            document.getElementById('player-container').style.display = 'block';
-            const video = document.getElementById('videoPlayer');
+            // رسالة إجبارية قاطعة تظهر في كل المنصات، التطبيقات، ومواقع التوجيه الـ WebView
+            alert("⚠️ نظام الحماية النشط: سيتم الآن تحويل البث فوراً وتلقائياً إلى مشغل النظام الخارجي لضمان تشغيل مستقر، وتفعيل جودة ملء الشاشة الكاملة (Fullscreen).");
             
-            // 🚀 تفعيل شريط البث والتحكم إجبارياً عند تشغيل الفيديو داخل المتصفح
-            video.controls = true; 
-            
-            if (hls) hls.destroy();
-
-            if (Hls.isSupported()) {
-                hls = new Hls({
-                    maxBufferLength: 90,           // تخزين 90 ثانية مسبقاً في الذاكرة لتجنب أي هبوط مفاجئ للإنترنت
-                    maxMaxBufferLength: 180,       // السماح بملء ذاكرة احتياطية تصل لـ 3 دقائق عند استقرار الشبكة
-                    maxBufferSize: 250 * 1024 * 1024, 
-                    enableWorker: true,            
-                    lowLatencyMode: false,         
-                    progressive: true,             
-                    abrEwmaDefaultEstimate: 30000, 
-                    backBufferLength: 60,          
-                    manifestLoadingTimeOut: 30000, 
-                    manifestLoadingMaxRetry: 10,   
-                    levelLoadingTimeOut: 30000,
-                    levelLoadingMaxRetry: 10,
-                    fragLoadingTimeOut: 40000,
-                    fragLoadingMaxRetry: 12
-                });
-
-                hls.loadSource(url);
-                hls.attachMedia(video);
-
-                hls.on(Hls.Events.ERROR, function (event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                            case Hls.ErrorTypes.NETWORK_ERROR:
-                                hls.startLoad(); 
-                                break;
-                            case Hls.ErrorTypes.MEDIA_ERROR:
-                                hls.recoverMediaError(); 
-                                break;
-                            default:
-                                hls.destroy();
-                                playStream(url); 
-                                break;
-                        }
-                    }
-                });
-            } 
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = url;
-            }
+            // توجيه فوري ومباشر خارج المتصفح المقيد
+            window.location.href = url;
+            return;
         }
 
         function closePlayer() {
