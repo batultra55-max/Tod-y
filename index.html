@@ -34,7 +34,7 @@
         .dev-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1a2233; font-size: 12px; }
         .dev-item input { width: auto; margin: 0; }
         
-        /* 📺 ترقية وتجميل واجهة مشغل الفيديوهات الاحترافي */
+        /* 📺 واجهة مشغل الفيديوهات الاحترافي */
         #player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; animation: fadeIn 0.3s ease; }
         video { width: 100%; height: 100%; background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8); object-fit: contain; }
         .close-player { position: absolute; top: 25px; right: 25px; background: rgba(230, 30, 80, 0.85); color: #fff; padding: 10px 20px; border-radius: 30px; cursor: pointer; z-index: 2101; font-weight: bold; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(230,30,80,0.4); border: 1px solid rgba(255,255,255,0.1); }
@@ -211,59 +211,60 @@
             }
         }
 
-        // 🛡️ [تحديث محرك البث الخارق]: تفعيل استراتيجية الحماية الثلاثية + تخطي قيود HTTPS
+        // 🛡️ [محرك البث الفولاذي المطور]: تكوين مضاد للتقطيع مع التفعيل الإجباري لشريط التحكم
         let hls = null;
         function playStream(url) {
+            if (confirm("هل تريد تشغيل القناة في مشغل خارجي (مثل VLC/MX) لضمان ثبات خارق بدون قيود متصفح؟")) {
+                window.location.href = url; 
+                return;
+            }
+
             document.getElementById('player-container').style.display = 'block';
             const video = document.getElementById('videoPlayer');
+            
+            // 🚀 تفعيل شريط البث والتحكم إجبارياً عند تشغيل الفيديو داخل المتصفح
+            video.controls = true; 
+            
             if (hls) hls.destroy();
-
-            // 🚀 حيلة تخطي قيود GitHub Pages: إذا كان الرابط غير آمن والموقع يعمل على HTTPS، يتم تحويله عبر بروكسي وسيط آمن
-            if (window.location.protocol === 'https:' && url.startsWith('http://')) {
-                console.log("تم رصد محتوى مختلط! جاري تشغيل البروكسي الآمن لتخطي الحظر...");
-                url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
-            }
 
             if (Hls.isSupported()) {
                 hls = new Hls({
-                    // 1. زيادة الذاكرة المؤقتة الذكية لامتصاص تذبذب سرعة الإنترنت
-                    maxBufferLength: 50,         // الاحتفاظ بـ 50 ثانية مستمرة مخزنة مسبقاً داخل المعالج
-                    maxMaxBufferLength: 100,     // أقصى سعة تخزين مؤقت احتياطي تصل إلى 100 ثانية للتحميل الثقيل
-                    
-                    // 2. تفعيل معالجة الخلفية وخفض وقت التأخير للاستقرار
-                    enableWorker: true,          // فك الشفرة البرمجية عبر خيوط معالجة منفصلة لمنع تجمد الصورة (Freezing)
-                    lowLatencyMode: false,       // تعطيل ميزة زمن التأخير المنخفض ليعطي الأولوية القصوى "لثبات وثقل البث" بدلاً من السرعة
-                    
-                    // 3. سياسة التكيّف شديدة العدوانية مع الإنترنت الضعيف
-                    abrEwmaDefaultEstimate: 50000, // إجبار المشغل على تخمين سرعة ضعيفة جداً افتراضياً ليعمل البث فوراً ولا ينتظر طويلاً
-                    backBufferLength: 30         // حماية أجزاء البث السابقة لمنع حدوث البكسلة المفاجئة
+                    maxBufferLength: 90,           // تخزين 90 ثانية مسبقاً في الذاكرة لتجنب أي هبوط مفاجئ للإنترنت
+                    maxMaxBufferLength: 180,       // السماح بملء ذاكرة احتياطية تصل لـ 3 دقائق عند استقرار الشبكة
+                    maxBufferSize: 250 * 1024 * 1024, 
+                    enableWorker: true,            
+                    lowLatencyMode: false,         
+                    progressive: true,             
+                    abrEwmaDefaultEstimate: 30000, 
+                    backBufferLength: 60,          
+                    manifestLoadingTimeOut: 30000, 
+                    manifestLoadingMaxRetry: 10,   
+                    levelLoadingTimeOut: 30000,
+                    levelLoadingMaxRetry: 10,
+                    fragLoadingTimeOut: 40000,
+                    fragLoadingMaxRetry: 12
                 });
 
                 hls.loadSource(url);
                 hls.attachMedia(video);
 
-                // 🔄 بروتوكول التعافي الذاتي والقسري من الأخطاء والضغط العالي (Self-Healing Mechanism)
                 hls.on(Hls.Events.ERROR, function (event, data) {
                     if (data.fatal) {
                         switch (data.type) {
                             case Hls.ErrorTypes.NETWORK_ERROR:
-                                console.log("هبوط في الإنترنت أو السيرفر، جاري المحاولة القسرية لتخطي الخطأ دون توقف...");
-                                hls.startLoad(); // إعادة جلب البيانات فوراً دون إظهار علامة تحميل للمستخدم
+                                hls.startLoad(); 
                                 break;
                             case Hls.ErrorTypes.MEDIA_ERROR:
-                                console.log("خطأ في تدفق الميديا، جاري تنقية البث برمجياً ومتابعة العرض...");
-                                hls.recoverMediaError(); // التعافي اللحظي ومتابعة فك البث
+                                hls.recoverMediaError(); 
                                 break;
                             default:
-                                console.log("خطأ غير متوقع، جاري إنعاش المحرك ذاتياً...");
                                 hls.destroy();
-                                playStream(url); // إعادة بناء الجلسة في أجزاء من الثانية رغماً عن الظروف
+                                playStream(url); 
                                 break;
                         }
                     }
                 });
             } 
-            // دعم الهواتف الذكية ومتصفحات Safari التي تدعم HLS داخلياً
             else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = url;
             }
@@ -279,4 +280,3 @@
     </script>
 </body>
 </html>
-
