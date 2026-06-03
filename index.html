@@ -4,31 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOD-Y</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         :root { --bg: #06090e; --card: #111622; --accent: #00e676; --text: #fff; --muted: #8b9bb4; --danger: #e61e50; --primary: #24314b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
         .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 4%; background: #0b0f17; border-bottom: 1px solid #1a2233; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 22px; font-weight: 900; cursor: pointer; }
         .logo span { color: var(--accent); }
-        .menu-btn { font-size: 24px; cursor: pointer; color: var(--text); font-weight: bold; }
+        .menu-btn { font-size: 24px; cursor: pointer; }
         .main-container { padding: 15px 4%; max-width: 1600px; margin: 0 auto; }
         .section-title { font-size: 17px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
         .back-btn { font-size: 12px; background: var(--primary); padding: 4px 8px; border-radius: 4px; cursor: pointer; color: var(--accent); }
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
         @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } }
-        
-        .folder-icon { width: 45px; height: 32px; background: #ffe082; border-radius: 0 4px 4px 4px; position: relative; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .folder-icon { width: 45px; height: 32px; background: #ffe082; border-radius: 0 4px 4px 4px; position: relative; margin: 0 auto; }
         .folder-icon::before { content: ''; width: 18px; height: 6px; background: #ffe082; border-radius: 3px 3px 0 0; position: absolute; top: -6px; left: 0; }
-        
         .card { background: var(--card); border-radius: 8px; overflow: hidden; border: 1px solid #1a2233; transition: 0.15s; cursor: pointer; text-align: center; padding: 12px 6px; }
         .card:hover { border-color: var(--accent); transform: translateY(-2px); }
         .card-img-holder { width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; }
         .card-title { padding-top: 8px; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4,6,10,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); padding: 15px; }
         .modal-content { background: var(--card); border: 1px solid #24314b; padding: 15px; border-radius: 8px; width: 100%; max-width: 500px; }
         input { width: 100%; padding: 8px; background: #0b0f17; border: 1px solid #1a2233; border-radius: 4px; color: #fff; margin-bottom: 8px; font-size: 13px; }
@@ -36,20 +32,16 @@
         .btn { width: 100%; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 4px; font-size: 13px; }
         .btn-primary { background: var(--accent); color: #000; }
         .btn-secondary { background: var(--primary); color: #fff; }
-        
-        .info-box { background: #0b0f17; border: 1px dashed var(--accent); padding: 8px; border-radius: 4px; margin: 6px 0; font-size: 11px; line-height: 1.4; color: var(--muted); }
+        .info-box { background: #0b0f17; border: 1px dashed var(--accent); padding: 8px; border-radius: 4px; margin: 6px 0; font-size: 11px; color: var(--muted); }
         .dev-list { max-height: 220px; overflow-y: auto; background: #0b0f17; padding: 4px; border-radius: 4px; border: 1px solid #1a2233; margin-top: 5px; }
-        
         .server-wrapper { margin-bottom: 8px; border: 1px solid #1a2233; border-radius: 4px; overflow: hidden; }
         .server-header { background: #1a2233; padding: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
         .server-content { display: none; padding: 4px; background: #0f131c; }
-        
-        .dev-item { display: flex; align-items: center; gap: 6px; padding: 5px 2px; border-bottom: 1px solid #1a2233; font-size: 11px; justify-content: space-between; }
-        .edit-input { width: 120px; padding: 3px; background: #1a2233; border: 1px solid #24314b; font-size: 11px; color: #fff; }
+        .dev-item { display: flex; flex-direction: column; border-bottom: 1px solid #1a2233; padding: 5px 0; }
+        .dev-item-main { display: flex; align-items: center; justify-content: space-between; font-size: 11px; width: 100%; }
+        .edit-input { width: 110px; padding: 3px; background: #1a2233; border: 1px solid #24314b; font-size: 11px; color: #fff; }
         .sm-btn { padding: 3px 6px; font-size: 10px; border-radius: 3px; border: none; cursor: pointer; color: #fff; font-weight: bold; }
-        #player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; }
-        video { width: 100%; height: 100%; object-fit: contain; }
-        .close-player { position: absolute; top: 20px; right: 20px; background: var(--danger); color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; z-index: 2101; font-weight: bold; font-size: 12px; }
+        .chan-manager { display: none; background: #070a0f; padding: 6px; margin-top: 4px; border-radius: 4px; border: 1px solid #24314b; max-height: 150px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -75,7 +67,6 @@
     <div class="modal" id="developerModal">
         <div class="modal-content">
             <h3 style="margin-bottom:8px; color:var(--accent)">لوحة المطور</h3>
-
             <input type="text" id="xtreamHost" placeholder="رابط الـ Host">
             <input type="text" id="xtreamUser" placeholder="اسم المستخدم">
             <input type="text" id="xtreamPass" placeholder="كلمة المرور">
@@ -83,49 +74,34 @@
             
             <div style="margin-top: 12px;">
                 <h5 style="color:var(--muted); margin-bottom:6px;">إدارة مجلدات السيرفرات:</h5>
-                
                 <div style="display:flex; gap:6px; margin-bottom:6px; align-items:center;">
-                    <label style="font-size:11px; display:flex; align-items:center; gap:3px; cursor:pointer; color:var(--text)">
-                        <input type="checkbox" id="selectAllCats" onchange="toggleSelectAll(this)"> تحديد الكل
+                    <label style="font-size:11px; display:flex; align-items:center; gap:3px; cursor:pointer;">
+                        <input type="checkbox" id="selectAllCats" onchange="toggleSelectAll(this)"> الكل
                     </label>
-                    <button class="sm-btn" style="background:var(--danger);" onclick="bulkAction('delete')">حذف المحدد</button>
+                    <button class="sm-btn" style="background:var(--danger);" onclick="bulkAction('delete')">حذف</button>
                     <button class="sm-btn" style="background:var(--primary); color:var(--accent);" onclick="bulkAction('hide')">إخفاء</button>
                     <button class="sm-btn" style="background:#0d47a1;" onclick="bulkAction('show')">إظهار</button>
                 </div>
-                
                 <div class="dev-list" id="devServerCatList"></div>
             </div>
-
-            <button class="btn btn-secondary" onclick="closeModal('developerModal')" style="margin-top: 12px;">إغلاق اللوحة</button>
+            <button class="btn btn-secondary" onclick="closeModal('developerModal')" style="margin-top:12px;">إغلاق اللوحة</button>
         </div>
     </div>
 
-    <div id="player-container">
-        <div class="close-player" onclick="closePlayer()">إغلاق البث</div>
-        <video id="videoPlayer" controls autoplay playsinline preload="none"></video>
-    </div>
-
     <script>
-        const firebaseConfig = { databaseURL: "https://yall-taoaqo3-default-rtdb.firebaseio.com/" };
-        firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp({ databaseURL: "https://yall-taoaqo3-default-rtdb.firebaseio.com/" });
         const db = firebase.database();
-
-        let globalAppData = { servers: {} };
-        let currentView = "categories";
-        let activeCatId = null;
-        let activeServerId = null;
+        let globalAppData = { servers: {} }, currentView = "categories", activeCatId = null, activeServerId = null;
 
         function loadSavedDataOnStartup() {
-            db.ref('tody_multi_stream_data').on('value', (snapshot) => {
-                const data = snapshot.val();
-                globalAppData = data && data.servers ? data : { servers: {} };
+            db.ref('tody_multi_stream_data').on('value', (s) => {
+                globalAppData = s.val() && s.val().servers ? s.val() : { servers: {} };
                 renderAppUI();
                 if(document.getElementById('developerModal').style.display === 'flex') renderDevLists();
             }, e => {
                 document.getElementById('appContent').innerHTML = `<div class="section-title" style="text-align:center; display:block;">خطأ في الشبكة.</div>`;
             });
         }
-
         window.onload = loadSavedDataOnStartup;
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -135,41 +111,27 @@
             if (document.getElementById('secureCode').value === "V555") {
                 closeModal('authModal'); document.getElementById('secureCode').value = "";
                 openModal('developerModal'); renderDevLists();
-            } else { alert("الرمز خاطئ!"); }
+            } else alert("الرمز خاطئ!");
         }
 
         async function fetchXtream() {
-            const host = document.getElementById('xtreamHost').value.trim();
-            const user = document.getElementById('xtreamUser').value.trim();
-            const pass = document.getElementById('xtreamPass').value.trim();
-            if(!host || !user || !pass) return alert("املاً الحقول!");
-
+            const h = document.getElementById('xtreamHost').value.trim(), u = document.getElementById('xtreamUser').value.trim(), p = document.getElementById('xtreamPass').value.trim();
+            if(!h || !u || !p) return alert("املاً الحقول!");
             try {
                 const [catRes, chanRes] = await Promise.all([
-                    fetch(`${host}/player_api.php?username=${user}&password=${pass}&action=get_live_categories`).then(r => r.json()),
-                    fetch(`${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`).then(r => r.json())
+                    fetch(`${h}/player_api.php?username=${u}&password=${p}&action=get_live_categories`).then(r => r.json()),
+                    fetch(`${h}/player_api.php?username=${u}&password=${p}&action=get_live_streams`).then(r => r.json())
                 ]);
-
-                const serverId = "srv_" + btoa(host + user).replace(/[^a-zA-Z0-9]/g, "").substring(0, 15);
-                
+                const sId = "srv_" + btoa(h + u).replace(/[^a-zA-Z0-9]/g, "").substring(0, 15);
                 let categories = {};
                 catRes.forEach(c => { categories[c.category_id] = { name: c.category_name, visible: true }; });
-
                 let channels = chanRes.map(ch => ({
                     id: ch.stream_id, name: ch.name, catId: ch.category_id,
-                    icon: ch.stream_icon || '', url: `${host}/live/${user}/${pass}/${ch.stream_id}.m3u8`
+                    icon: ch.stream_icon || '', url: `${h}/live/${u}/${p}/${ch.stream_id}.m3u8`
                 }));
-
-                globalAppData.servers[serverId] = {
-                    id: serverId, host: host, user: user, pass: pass,
-                    categories: categories, channels: channels
-                };
-
+                globalAppData.servers[sId] = { id: sId, host: h, user: u, pass: p, categories, channels };
                 db.ref('tody_multi_stream_data').set(globalAppData);
                 alert("تم الحفظ!");
-                document.getElementById('xtreamHost').value = "";
-                document.getElementById('xtreamUser').value = "";
-                document.getElementById('xtreamPass').value = "";
                 renderDevLists();
             } catch (e) { alert("فشل الجلب!"); }
         }
@@ -177,21 +139,17 @@
         function renderAppUI() {
             const container = document.getElementById('appContent'); container.innerHTML = "";
             let hasData = false;
-
             if (currentView === "categories") {
-                const title = document.createElement('div'); title.className = 'section-title'; title.innerText = "المجلدات المتوفرة"; container.appendChild(title);
+                container.innerHTML = `<div class="section-title">المجلدات المتوفرة</div>`;
                 const grid = document.createElement('div'); grid.className = 'grid-layout';
-
                 for (let sId in globalAppData.servers) {
-                    const server = globalAppData.servers[sId];
-                    for (let cId in server.categories) {
-                        const cat = server.categories[cId];
+                    const srv = globalAppData.servers[sId];
+                    for (let cId in srv.categories) {
+                        const cat = srv.categories[cId];
                         if (cat.visible === false) continue;
-
-                        const count = server.channels.filter(ch => ch.catId == cId).length;
+                        const count = srv.channels.filter(ch => ch.catId == cId).length;
                         if (count === 0) continue;
                         hasData = true;
-
                         const card = document.createElement('div'); card.className = 'card';
                         card.onclick = () => { activeServerId = sId; activeCatId = cId; currentView = "channels"; renderAppUI(); };
                         card.innerHTML = `<div class="card-img-holder"><div class="folder-icon"></div></div><div class="card-title">${cat.name}<br><span style="color:var(--muted); font-size:10px;">${count} قناة</span></div>`;
@@ -201,13 +159,11 @@
                 container.appendChild(grid);
                 if(!hasData) container.innerHTML = `<div class="section-title" style="text-align:center; display:block;">السحاب فارغ.</div>`;
             } else {
-                const server = globalAppData.servers[activeServerId];
-                if(!server || !server.categories[activeCatId]) { backToCats(); return; }
-
-                const header = document.createElement('div'); header.className = 'section-title'; header.innerHTML = `<span>${server.categories[activeCatId].name}</span><span class="back-btn" onclick="backToCats()">عودة</span>`; container.appendChild(header);
+                const srv = globalAppData.servers[activeServerId];
+                if(!srv || !srv.categories[activeCatId]) { backToCats(); return; }
+                container.innerHTML = `<div class="section-title"><span>${srv.categories[activeCatId].name}</span><span class="back-btn" onclick="backToCats()">عودة</span></div>`;
                 const grid = document.createElement('div'); grid.className = 'grid-layout';
-
-                server.channels.filter(ch => ch.catId == activeCatId).forEach(chan => {
+                srv.channels.filter(ch => ch.catId == activeCatId).forEach(chan => {
                     const card = document.createElement('div'); card.className = 'card'; card.onclick = () => playStream(chan.url);
                     const img = (chan.icon && chan.icon.startsWith('http')) ? `<img src="${chan.icon}" style="width:100%;aspect-ratio:16/10;object-fit:contain;">` : `<div style="font-size:11px;color:var(--accent);padding:10px 0;">بث مباشر</div>`;
                     card.innerHTML = `${img}<div class="card-title">${chan.name}</div>`;
@@ -222,126 +178,79 @@
         function renderDevLists() {
             const container = document.getElementById('devServerCatList'); container.innerHTML = "";
             document.getElementById('selectAllCats').checked = false;
-
             for (let sId in globalAppData.servers) {
                 const srv = globalAppData.servers[sId];
-                
-                const wrapper = document.createElement('div');
-                wrapper.className = 'server-wrapper';
-
-                const header = document.createElement('div');
-                header.className = 'server-header';
+                const wrapper = document.createElement('div'); wrapper.className = 'server-wrapper';
+                const header = document.createElement('div'); header.className = 'server-header';
                 header.innerHTML = `<span>📁 سيرفر: ${srv.user}</span><button class="sm-btn" style="background:var(--danger);" onclick="deleteFullServer('${sId}')">حذف</button>`;
-                
-                const content = document.createElement('div');
-                content.className = 'server-content';
+                const content = document.createElement('div'); content.className = 'server-content';
                 content.id = `content-${sId}`;
-
-                content.innerHTML = `
-                    <div class="info-box">
-                        الهوست: ${srv.host}<br>المستخدم: ${srv.user} | المجلدات: ${Object.keys(srv.categories).length}
-                    </div>
-                `;
-
-                header.onclick = (e) => {
-                    if(e.target.tagName !== 'BUTTON') {
-                        const disp = content.style.display;
-                        content.style.display = (disp === 'block') ? 'none' : 'block';
-                    }
-                };
+                content.innerHTML = `<div class="info-box">الهوست: ${srv.host}<br>المستخدم: ${srv.user}</div>`;
+                header.onclick = (e) => { if(e.target.tagName !== 'BUTTON') content.style.display = (content.style.display === 'block') ? 'none' : 'block'; };
 
                 for (let cId in srv.categories) {
-                    const cat = srv.categories[cId];
-                    const item = document.createElement('div');
-                    item.className = 'dev-item';
-                    const statusText = cat.visible !== false ? `<span style="color:var(--accent)">ظاهر</span>` : `<span style="color:var(--muted)">مخفي</span>`;
-                    
+                    const cat = srv.categories[cId], item = document.createElement('div'); item.className = 'dev-item';
+                    const status = cat.visible !== false ? `<span style="color:var(--accent)">ظاهر</span>` : `<span style="color:var(--muted)">مخفي</span>`;
                     item.innerHTML = `
-                        <div class="dev-item-right">
-                            <input type="checkbox" class="cat-chk" data-srv="${sId}" data-cat="${cId}">
-                            <input type="text" class="edit-input" value="${cat.name}" onchange="updateCatName('${sId}', '${cId}', this.value)">
-                        </div>
-                        <div class="action-btns">
-                            ${statusText}
+                        <div class="dev-item-main">
+                            <div><input type="checkbox" class="cat-chk" data-srv="${sId}" data-cat="${cId}">
+                            <input type="text" class="edit-input" value="${cat.name}" onchange="updateCatName('${sId}', '${cId}', this.value)"></div>
+                            <div>${status}
                             <button class="sm-btn" style="background:var(--primary);" onclick="toggleCatVisibility('${sId}','${cId}')">عين</button>
+                            <button class="sm-btn" style="background:var(--accent); color:#000;" onclick="toggleChanManager('${sId}','${cId}')">✎</button></div>
                         </div>
-                    `;
+                        <div class="chan-manager" id="chm-${sId}-${cId}"></div>`;
                     content.appendChild(item);
                 }
-
-                wrapper.appendChild(header);
-                wrapper.appendChild(content);
-                container.appendChild(wrapper);
+                wrapper.appendChild(header); wrapper.appendChild(content); container.appendChild(wrapper);
             }
         }
 
-        function updateCatName(sId, cId, newVal) {
-            if(newVal.trim() === "") return;
-            globalAppData.servers[sId].categories[cId].name = newVal.trim();
-            db.ref('tody_multi_stream_data').set(globalAppData);
-        }
-
-        function toggleCatVisibility(sId, cId) {
-            const cat = globalAppData.servers[sId].categories[cId];
-            cat.visible = (cat.visible === false) ? true : false;
-            db.ref('tody_multi_stream_data').set(globalAppData);
-        }
-
-        function deleteFullServer(sId) {
-            if(confirm("حذف السيرفر؟")) {
-                delete globalAppData.servers[sId];
-                db.ref('tody_multi_stream_data').set(globalAppData);
-                backToCats();
-            }
-        }
-
-        function toggleSelectAll(master) {
-            document.querySelectorAll('.cat-chk').forEach(cb => cb.checked = master.checked);
-        }
+        function updateCatName(sId, cId, val) { if(val.trim()==="")return; globalAppData.servers[sId].categories[cId].name = val.trim(); db.ref('tody_multi_stream_data').set(globalAppData); }
+        function toggleCatVisibility(sId, cId) { globalAppData.servers[sId].categories[cId].visible = !(globalAppData.servers[sId].categories[cId].visible !== false); db.ref('tody_multi_stream_data').set(globalAppData); }
+        function deleteFullServer(sId) { if(confirm("حذف السيرفر؟")) { delete globalAppData.servers[sId]; db.ref('tody_multi_stream_data').set(globalAppData); backToCats(); } }
+        function toggleSelectAll(m) { document.querySelectorAll('.cat-chk').forEach(cb => cb.checked = m.checked); }
 
         function bulkAction(type) {
-            const chks = document.querySelectorAll('.cat-chk:checked');
-            if(chks.length === 0) return alert("حدد أولاً!");
+            const chks = document.querySelectorAll('.cat-chk:checked'); if(chks.length === 0) return alert("حدد أولاً!");
             if(type === 'delete' && !confirm("حذف المحدد؟")) return;
-
             chks.forEach(cb => {
-                const sId = cb.getAttribute('data-srv');
-                const cId = cb.getAttribute('data-cat');
+                const sId = cb.getAttribute('data-srv'), cId = cb.getAttribute('data-cat');
                 if(globalAppData.servers[sId] && globalAppData.servers[sId].categories[cId]) {
-                    if(type === 'delete') {
-                        delete globalAppData.servers[sId].categories[cId];
-                        globalAppData.servers[sId].channels = globalAppData.servers[sId].channels.filter(ch => ch.catId != cId);
-                    } else {
-                        globalAppData.servers[sId].categories[cId].visible = (type === 'show');
-                    }
+                    if(type === 'delete') { delete globalAppData.servers[sId].categories[cId]; globalAppData.servers[sId].channels = globalAppData.servers[sId].channels.filter(ch => ch.catId != cId); }
+                    else globalAppData.servers[sId].categories[cId].visible = (type === 'show');
                 }
             });
-
-            db.ref('tody_multi_stream_data').set(globalAppData);
-            if(type === 'delete') backToCats();
+            db.ref('tody_multi_stream_data').set(globalAppData); if(type === 'delete') backToCats();
         }
 
-        // بروتوكول التشغيل القسري لضمان أقصى بفرة واستقرار بدون تقطيع
+        function toggleChanManager(sId, cId) {
+            const box = document.getElementById(`chm-${sId}-${cId}`);
+            if (box.style.display === 'block') { box.style.display = 'none'; return; }
+            box.style.display = 'block'; box.innerHTML = `<div style="font-size:10px;color:var(--muted);margin-bottom:4px;">تحميل القنوات...</div>`;
+            const chans = globalAppData.servers[sId].channels.filter(ch => ch.catId == cId);
+            if(chans.length === 0) { box.innerHTML = `<div style="font-size:10px;color:var(--danger)">لا توجد قنوات.</div>`; return; }
+            let html = `<button class="sm-btn" style="background:var(--danger);width:100%;margin-bottom:5px;" onclick="deleteSelectedChans('${sId}','${cId}')">حذف القنوات المحددة</button>`;
+            chans.forEach(ch => {
+                html += `<div style="display:flex;align-items:center;gap:4px;font-size:10px;padding:2px 0;"><input type="checkbox" class="ch-del-chk" data-id="${ch.id}"> <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ch.name}</span></div>`;
+            });
+            box.innerHTML = html;
+        }
+
+        function deleteSelectedChans(sId, cId) {
+            const checked = document.querySelectorAll(`#chm-${sId}-${cId} .ch-del-chk:checked`);
+            if(checked.length === 0) return alert("حدد قنوات أولاً!");
+            if(!confirm("حذف القنوات المحددة؟")) return;
+            const ids = Array.from(checked).map(cb => cb.getAttribute('data-id'));
+            globalAppData.servers[sId].channels = globalAppData.servers[sId].channels.filter(ch => !ids.includes(String(ch.id)));
+            db.ref('tody_multi_stream_data').set(globalAppData).then(() => { alert("تم الحذف بنجاح"); toggleChanManager(sId, cId); toggleChanManager(sId, cId); });
+        }
+
         function playStream(url) {
-            alert("تحويل للمشغل الخارجي المستقر...");
-            
-            // صياغة روابط مشغلات متقدمة لتفعيل البفرة القصوى واستهلاك منخفض للشبكة وضمان الفتح الفوري
+            alert("تحويل للمشغل الخارجي...");
             if (/Android/i.test(navigator.userAgent)) {
-                const cleanUrl = url.replace("http://", "").replace("https://", "");
-                
-                // بروتوكول VLC القسري المزود بأوامر زيادة حجم البفرة (Network Caching) وثبات الاستقبال الإذاعي المتدفق
-                const vlcIntent = `intent://${cleanUrl}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=TOD-Y%20Stream;i.network-caching=8000;end`;
-                
-                window.location.href = vlcIntent;
-            } else {
-                window.location.href = url;
-            }
-        }
-
-        function closePlayer() {
-            const video = document.getElementById('videoPlayer');
-            video.pause(); video.src = "";
-            document.getElementById('player-container').style.display = 'none';
+                window.location.href = `intent://${url.replace("http://", "").replace("https://", "")}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=TOD-Y%20Stream;i.network-caching=8000;end`;
+            } else window.location.href = url;
         }
     </script>
 </body>
