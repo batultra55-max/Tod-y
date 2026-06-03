@@ -8,39 +8,48 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
-        :root { --bg: #06090e; --card: #111622; --accent: #00e676; --text: #fff; --muted: #8b9bb4; --danger: #e61e50; }
+        :root { --bg: #06090e; --card: #111622; --accent: #00e676; --text: #fff; --muted: #8b9bb4; --danger: #e61e50; --primary: #24314b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; background: #0b0f17; border-bottom: 1px solid #1a2233; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 24px; font-weight: 900; color: var(--text); cursor: pointer; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 4%; background: #0b0f17; border-bottom: 1px solid #1a2233; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 900; cursor: pointer; }
         .logo span { color: var(--accent); }
-        .menu-btn { font-size: 26px; cursor: pointer; }
-        .main-container { padding: 20px 4%; max-width: 1600px; margin: 0 auto; }
-        .section-title { font-size: 19px; margin: 20px 0; display: flex; justify-content: space-between; align-items: center; }
-        .back-btn { font-size: 13px; background: #24314b; padding: 5px 10px; border-radius: 6px; cursor: pointer; color: var(--accent); }
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-        @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
-        .card { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid #1a2233; transition: 0.2s; cursor: pointer; text-align: center; }
-        .card:hover { border-color: var(--accent); transform: translateY(-3px); }
-        .card-img { width: 100%; aspect-ratio: 16/10; background: #0b0f17; display: flex; align-items: center; justify-content: center; font-size: 28px; object-fit: cover; }
-        .card-title { padding: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4,6,10,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px); padding: 15px; }
-        .modal-content { background: var(--card); border: 1px solid #24314b; padding: 20px; border-radius: 12px; width: 100%; max-width: 500px; }
-        input { width: 100%; padding: 10px; background: #0b0f17; border: 1px solid #1a2233; border-radius: 6px; color: #fff; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 5px; }
-        .btn-primary { background: var(--accent); color: #000; }
-        .btn-danger { background: var(--danger); color: #fff; }
-        .btn-secondary { background: #24314b; color: #fff; }
-        .dev-list { max-height: 150px; overflow-y: auto; background: #0b0f17; padding: 8px; border-radius: 6px; border: 1px solid #1a2233; margin-top: 5px; }
-        .dev-item { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #1a2233; font-size: 12px; }
-        .dev-item input { width: auto; margin: 0; }
+        .menu-btn { font-size: 24px; cursor: pointer; color: var(--text); font-weight: bold; }
+        .main-container { padding: 15px 4%; max-width: 1600px; margin: 0 auto; }
+        .section-title { font-size: 17px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .back-btn { font-size: 12px; background: var(--primary); padding: 4px 8px; border-radius: 4px; cursor: pointer; color: var(--accent); }
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+        @media (min-width: 768px) { .grid-layout { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); } }
         
-        /* 📺 واجهة مشغل الفيديوهات الاحترافي المحمية */
-        #player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; animation: fadeIn 0.3s ease; }
-        video { width: 100%; height: 100%; background: #000; box-shadow: 0 0 50px rgba(0,0,0,0.8); object-fit: contain; }
-        .close-player { position: absolute; top: 25px; right: 25px; background: rgba(230, 30, 80, 0.85); color: #fff; padding: 10px 20px; border-radius: 30px; cursor: pointer; z-index: 2101; font-weight: bold; font-size: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(230,30,80,0.4); border: 1px solid rgba(255,255,255,0.1); }
-        .close-player:hover { background: var(--danger); transform: scale(1.05); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .folder-icon { width: 45px; height: 32px; background: #ffe082; border-radius: 0 4px 4px 4px; position: relative; margin: 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .folder-icon::before { content: ''; width: 18px; height: 6px; background: #ffe082; border-radius: 3px 3px 0 0; position: absolute; top: -6px; left: 0; }
+        
+        .card { background: var(--card); border-radius: 8px; overflow: hidden; border: 1px solid #1a2233; transition: 0.15s; cursor: pointer; text-align: center; padding: 12px 6px; }
+        .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .card-img-holder { width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; }
+        .card-title { padding-top: 8px; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(4,6,10,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); padding: 15px; }
+        .modal-content { background: var(--card); border: 1px solid #24314b; padding: 15px; border-radius: 8px; width: 100%; max-width: 500px; }
+        input { width: 100%; padding: 8px; background: #0b0f17; border: 1px solid #1a2233; border-radius: 4px; color: #fff; margin-bottom: 8px; font-size: 13px; }
+        input:focus { border-color: var(--accent); outline: none; }
+        .btn { width: 100%; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 4px; font-size: 13px; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-secondary { background: var(--primary); color: #fff; }
+        
+        .info-box { background: #0b0f17; border: 1px dashed var(--accent); padding: 8px; border-radius: 4px; margin: 6px 0; font-size: 11px; line-height: 1.4; color: var(--muted); }
+        .dev-list { max-height: 220px; overflow-y: auto; background: #0b0f17; padding: 4px; border-radius: 4px; border: 1px solid #1a2233; margin-top: 5px; }
+        
+        .server-wrapper { margin-bottom: 8px; border: 1px solid #1a2233; border-radius: 4px; overflow: hidden; }
+        .server-header { background: #1a2233; padding: 8px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
+        .server-content { display: none; padding: 4px; background: #0f131c; }
+        
+        .dev-item { display: flex; align-items: center; gap: 6px; padding: 5px 2px; border-bottom: 1px solid #1a2233; font-size: 11px; justify-content: space-between; }
+        .edit-input { width: 120px; padding: 3px; background: #1a2233; border: 1px solid #24314b; font-size: 11px; color: #fff; }
+        .sm-btn { padding: 3px 6px; font-size: 10px; border-radius: 3px; border: none; cursor: pointer; color: #fff; font-weight: bold; }
+        #player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+        .close-player { position: absolute; top: 20px; right: 20px; background: var(--danger); color: #fff; padding: 8px 16px; border-radius: 20px; cursor: pointer; z-index: 2101; font-weight: bold; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -51,13 +60,13 @@
     </div>
 
     <div class="main-container" id="appContent">
-        <div class="section-title">جاري الاتصال بالسحاب ومزامنة قنواتك الثابتة...</div>
+        <div class="section-title">مزامنة السيرفرات السحابية...</div>
     </div>
 
     <div class="modal" id="authModal">
         <div class="modal-content">
-            <h3 style="margin-bottom:10px; color:var(--accent)">🔐 الوضع الآمن</h3>
-            <input type="password" id="secureCode" placeholder="أدخل رمز المطور السرّي">
+            <h3 style="margin-bottom:8px; color:var(--accent)">الوضع الآمن</h3>
+            <input type="password" id="secureCode" placeholder="رمز المطور السري">
             <button class="btn btn-primary" onclick="verifyCode()">دخول</button>
             <button class="btn btn-secondary" onclick="closeModal('authModal')">إلغاء</button>
         </div>
@@ -65,30 +74,35 @@
 
     <div class="modal" id="developerModal">
         <div class="modal-content">
-            <h3 style="margin-bottom:10px; color:var(--accent)">🛠️ لوحة المطور</h3>
+            <h3 style="margin-bottom:8px; color:var(--accent)">لوحة المطور</h3>
+
             <input type="text" id="xtreamHost" placeholder="رابط الـ Host">
             <input type="text" id="xtreamUser" placeholder="اسم المستخدم">
             <input type="text" id="xtreamPass" placeholder="كلمة المرور">
-            <button class="btn btn-primary" onclick="fetchXtream()">سحب وتحديث السيرفر اللحظي</button>
+            <button class="btn btn-primary" onclick="fetchXtream()">ضخ سيرفر جديد</button>
             
-            <div style="margin-top: 10px;">
-                <h5 style="color:var(--muted); margin-bottom:5px;">📁 حذف وتصفية المجلدات (تحديد جماعي):</h5>
-                <button class="btn btn-danger" style="padding:5px; font-size:12px;" onclick="deleteSelectedCats()">حذف المجلدات المحددة 🗑️</button>
-                <div class="dev-list" id="devCatList"></div>
+            <div style="margin-top: 12px;">
+                <h5 style="color:var(--muted); margin-bottom:6px;">إدارة مجلدات السيرفرات:</h5>
+                
+                <div style="display:flex; gap:6px; margin-bottom:6px; align-items:center;">
+                    <label style="font-size:11px; display:flex; align-items:center; gap:3px; cursor:pointer; color:var(--text)">
+                        <input type="checkbox" id="selectAllCats" onchange="toggleSelectAll(this)"> تحديد الكل
+                    </label>
+                    <button class="sm-btn" style="background:var(--danger);" onclick="bulkAction('delete')">حذف المحدد</button>
+                    <button class="sm-btn" style="background:var(--primary); color:var(--accent);" onclick="bulkAction('hide')">إخفاء</button>
+                    <button class="sm-btn" style="background:#0d47a1;" onclick="bulkAction('show')">إظهار</button>
+                </div>
+                
+                <div class="dev-list" id="devServerCatList"></div>
             </div>
 
-            <div style="margin-top: 10px;">
-                <h5 style="color:var(--muted); margin-bottom:5px;">📺 حذف قنوات فردية (لا تعجبك):</h5>
-                <div class="dev-list" id="devChanList"></div>
-            </div>
-
-            <button class="btn btn-secondary" onclick="closeModal('developerModal')" style="margin-top: 10px;">إغلاق</button>
+            <button class="btn btn-secondary" onclick="closeModal('developerModal')" style="margin-top: 12px;">إغلاق اللوحة</button>
         </div>
     </div>
 
     <div id="player-container">
-        <div class="close-player" onclick="closePlayer()">إغلاق البث ✖</div>
-        <video id="videoPlayer" controls autoplay playsinline preload="auto"></video>
+        <div class="close-player" onclick="closePlayer()">إغلاق البث</div>
+        <video id="videoPlayer" controls autoplay playsinline preload="none"></video>
     </div>
 
     <script>
@@ -96,26 +110,23 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let globalAppData = { categories: {}, channels: [] };
+        let globalAppData = { servers: {} };
         let currentView = "categories";
         let activeCatId = null;
+        let activeServerId = null;
 
         function loadSavedDataOnStartup() {
-            db.ref('tody_stream_data').once('value').then((snapshot) => {
+            db.ref('tody_multi_stream_data').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) { globalAppData = data; renderAppUI(); }
-                else { document.getElementById('appContent').innerHTML = `<div class="section-title" style="text-align:center; display:block; padding-top:50px;">📺 السيرفر السحابي فارغ، يرجى الدخول للوحة المطور وضخ قنوات الـ Xtream لأول مرة.</div>`; }
-            }).catch(e => {
-                document.getElementById('appContent').innerHTML = `<div class="section-title" style="text-align:center; display:block; padding-top:50px;">⚠️ أمان المتصفح يحظر الجلب التلقائي المحلي! يرجى رفع الملف على استضافة مجانية لتفعيل المزامنة السحابية.</div>`;
+                globalAppData = data && data.servers ? data : { servers: {} };
+                renderAppUI();
+                if(document.getElementById('developerModal').style.display === 'flex') renderDevLists();
+            }, e => {
+                document.getElementById('appContent').innerHTML = `<div class="section-title" style="text-align:center; display:block;">خطأ في الشبكة.</div>`;
             });
         }
 
         window.onload = loadSavedDataOnStartup;
-
-        db.ref('tody_stream_data').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) { globalAppData = data; renderAppUI(); if(document.getElementById('developerModal').style.display === 'flex') renderDevLists(); }
-        });
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -131,7 +142,7 @@
             const host = document.getElementById('xtreamHost').value.trim();
             const user = document.getElementById('xtreamUser').value.trim();
             const pass = document.getElementById('xtreamPass').value.trim();
-            if(!host || !user || !pass) return alert("املاً جميع الحقول!");
+            if(!host || !user || !pass) return alert("املاً الحقول!");
 
             try {
                 const [catRes, chanRes] = await Promise.all([
@@ -139,42 +150,66 @@
                     fetch(`${host}/player_api.php?username=${user}&password=${pass}&action=get_live_streams`).then(r => r.json())
                 ]);
 
-                let structuredCats = {};
-                catRes.forEach(c => structuredCats[c.category_id] = { name: c.category_name, visible: true });
+                const serverId = "srv_" + btoa(host + user).replace(/[^a-zA-Z0-9]/g, "").substring(0, 15);
+                
+                let categories = {};
+                catRes.forEach(c => { categories[c.category_id] = { name: c.category_name, visible: true }; });
 
-                let filteredChans = chanRes.map(ch => ({
+                let channels = chanRes.map(ch => ({
                     id: ch.stream_id, name: ch.name, catId: ch.category_id,
-                    icon: ch.stream_icon || '📺', url: `${host}/live/${user}/${pass}/${ch.stream_id}.m3u8`, visible: true
+                    icon: ch.stream_icon || '', url: `${host}/live/${user}/${pass}/${ch.stream_id}.m3u8`
                 }));
 
-                globalAppData = { categories: structuredCats, channels: filteredChans };
-                currentView = "categories";
-                db.ref('tody_stream_data').set(globalAppData);
-                alert("تم رفع القنوات بنجاح وتثبيتها في الـ Firebase! 🚀");
-            } catch (e) { alert("فشل جلب البيانات من السيرفر!"); }
+                globalAppData.servers[serverId] = {
+                    id: serverId, host: host, user: user, pass: pass,
+                    categories: categories, channels: channels
+                };
+
+                db.ref('tody_multi_stream_data').set(globalAppData);
+                alert("تم الحفظ!");
+                document.getElementById('xtreamHost').value = "";
+                document.getElementById('xtreamUser').value = "";
+                document.getElementById('xtreamPass').value = "";
+                renderDevLists();
+            } catch (e) { alert("فشل الجلب!"); }
         }
 
         function renderAppUI() {
             const container = document.getElementById('appContent'); container.innerHTML = "";
+            let hasData = false;
+
             if (currentView === "categories") {
-                const title = document.createElement('div'); title.className = 'section-title'; title.innerText = "📁 المجلدات المتوفرة"; container.appendChild(title);
+                const title = document.createElement('div'); title.className = 'section-title'; title.innerText = "المجلدات المتوفرة"; container.appendChild(title);
                 const grid = document.createElement('div'); grid.className = 'grid-layout';
-                for (let id in globalAppData.categories) {
-                    if (!globalAppData.categories[id].visible) continue;
-                    const count = globalAppData.channels.filter(ch => ch.catId == id && ch.visible !== false).length;
-                    if (count === 0) continue;
-                    const card = document.createElement('div'); card.className = 'card';
-                    card.onclick = () => { activeCatId = id; currentView = "channels"; renderAppUI(); };
-                    card.innerHTML = `<div class="card-img">📁</div><div class="card-title">${globalAppData.categories[id].name}<br><span style="color:var(--muted); font-size:10px;">${count} قناة</span></div>`;
-                    grid.appendChild(card);
+
+                for (let sId in globalAppData.servers) {
+                    const server = globalAppData.servers[sId];
+                    for (let cId in server.categories) {
+                        const cat = server.categories[cId];
+                        if (cat.visible === false) continue;
+
+                        const count = server.channels.filter(ch => ch.catId == cId).length;
+                        if (count === 0) continue;
+                        hasData = true;
+
+                        const card = document.createElement('div'); card.className = 'card';
+                        card.onclick = () => { activeServerId = sId; activeCatId = cId; currentView = "channels"; renderAppUI(); };
+                        card.innerHTML = `<div class="card-img-holder"><div class="folder-icon"></div></div><div class="card-title">${cat.name}<br><span style="color:var(--muted); font-size:10px;">${count} قناة</span></div>`;
+                        grid.appendChild(card);
+                    }
                 }
                 container.appendChild(grid);
+                if(!hasData) container.innerHTML = `<div class="section-title" style="text-align:center; display:block;">السحاب فارغ.</div>`;
             } else {
-                const header = document.createElement('div'); header.className = 'section-title'; header.innerHTML = `<span>📺 قنوات المجلد</span><span class="back-btn" onclick="backToCats()">⬅ عودة</span>`; container.appendChild(header);
+                const server = globalAppData.servers[activeServerId];
+                if(!server || !server.categories[activeCatId]) { backToCats(); return; }
+
+                const header = document.createElement('div'); header.className = 'section-title'; header.innerHTML = `<span>${server.categories[activeCatId].name}</span><span class="back-btn" onclick="backToCats()">عودة</span>`; container.appendChild(header);
                 const grid = document.createElement('div'); grid.className = 'grid-layout';
-                globalAppData.channels.filter(ch => ch.catId == activeCatId && ch.visible !== false).forEach(chan => {
+
+                server.channels.filter(ch => ch.catId == activeCatId).forEach(chan => {
                     const card = document.createElement('div'); card.className = 'card'; card.onclick = () => playStream(chan.url);
-                    const img = chan.icon.startsWith('http') ? `<img src="${chan.icon}" class="card-img" onerror="this.src='📺'">` : `<div class="card-img">📺</div>`;
+                    const img = (chan.icon && chan.icon.startsWith('http')) ? `<img src="${chan.icon}" style="width:100%;aspect-ratio:16/10;object-fit:contain;">` : `<div style="font-size:11px;color:var(--accent);padding:10px 0;">بث مباشر</div>`;
                     card.innerHTML = `${img}<div class="card-title">${chan.name}</div>`;
                     grid.appendChild(card);
                 });
@@ -182,67 +217,130 @@
             }
         }
 
-        function backToCats() { currentView = "categories"; activeCatId = null; renderAppUI(); }
+        function backToCats() { currentView = "categories"; activeCatId = null; activeServerId = null; renderAppUI(); }
 
         function renderDevLists() {
-            const catBox = document.getElementById('devCatList'); const chanBox = document.getElementById('devChanList');
-            catBox.innerHTML = ""; chanBox.innerHTML = "";
-            for (let id in globalAppData.categories) {
-                if (!globalAppData.categories[id].visible) continue;
-                catBox.innerHTML += `<div class="dev-item"><input type="checkbox" class="cat-del-chk" value="${id}"> <span>📁 ${globalAppData.categories[id].name}</span></div>`;
+            const container = document.getElementById('devServerCatList'); container.innerHTML = "";
+            document.getElementById('selectAllCats').checked = false;
+
+            for (let sId in globalAppData.servers) {
+                const srv = globalAppData.servers[sId];
+                
+                const wrapper = document.createElement('div');
+                wrapper.className = 'server-wrapper';
+
+                const header = document.createElement('div');
+                header.className = 'server-header';
+                header.innerHTML = `<span>📁 سيرفر: ${srv.user}</span><button class="sm-btn" style="background:var(--danger);" onclick="deleteFullServer('${sId}')">حذف</button>`;
+                
+                const content = document.createElement('div');
+                content.className = 'server-content';
+                content.id = `content-${sId}`;
+
+                content.innerHTML = `
+                    <div class="info-box">
+                        الهوست: ${srv.host}<br>المستخدم: ${srv.user} | المجلدات: ${Object.keys(srv.categories).length}
+                    </div>
+                `;
+
+                header.onclick = (e) => {
+                    if(e.target.tagName !== 'BUTTON') {
+                        const disp = content.style.display;
+                        content.style.display = (disp === 'block') ? 'none' : 'block';
+                    }
+                };
+
+                for (let cId in srv.categories) {
+                    const cat = srv.categories[cId];
+                    const item = document.createElement('div');
+                    item.className = 'dev-item';
+                    const statusText = cat.visible !== false ? `<span style="color:var(--accent)">ظاهر</span>` : `<span style="color:var(--muted)">مخفي</span>`;
+                    
+                    item.innerHTML = `
+                        <div class="dev-item-right">
+                            <input type="checkbox" class="cat-chk" data-srv="${sId}" data-cat="${cId}">
+                            <input type="text" class="edit-input" value="${cat.name}" onchange="updateCatName('${sId}', '${cId}', this.value)">
+                        </div>
+                        <div class="action-btns">
+                            ${statusText}
+                            <button class="sm-btn" style="background:var(--primary);" onclick="toggleCatVisibility('${sId}','${cId}')">عين</button>
+                        </div>
+                    `;
+                    content.appendChild(item);
+                }
+
+                wrapper.appendChild(header);
+                wrapper.appendChild(content);
+                container.appendChild(wrapper);
             }
-            globalAppData.channels.filter(ch => ch.visible !== false).forEach(ch => {
-                const item = document.createElement('div'); item.className = 'dev-item'; item.style.justifyContent = 'space-between';
-                item.innerHTML = `<span>📺 ${ch.name}</span><button onclick="deleteSingleChannel('${ch.id}')" style="background:var(--danger); border:none; color:#fff; padding:2px 6px; border-radius:4px; cursor:pointer; font-size:10px;">حذف ✖</button>`;
-                chanBox.appendChild(item);
+        }
+
+        function updateCatName(sId, cId, newVal) {
+            if(newVal.trim() === "") return;
+            globalAppData.servers[sId].categories[cId].name = newVal.trim();
+            db.ref('tody_multi_stream_data').set(globalAppData);
+        }
+
+        function toggleCatVisibility(sId, cId) {
+            const cat = globalAppData.servers[sId].categories[cId];
+            cat.visible = (cat.visible === false) ? true : false;
+            db.ref('tody_multi_stream_data').set(globalAppData);
+        }
+
+        function deleteFullServer(sId) {
+            if(confirm("حذف السيرفر؟")) {
+                delete globalAppData.servers[sId];
+                db.ref('tody_multi_stream_data').set(globalAppData);
+                backToCats();
+            }
+        }
+
+        function toggleSelectAll(master) {
+            document.querySelectorAll('.cat-chk').forEach(cb => cb.checked = master.checked);
+        }
+
+        function bulkAction(type) {
+            const chks = document.querySelectorAll('.cat-chk:checked');
+            if(chks.length === 0) return alert("حدد أولاً!");
+            if(type === 'delete' && !confirm("حذف المحدد؟")) return;
+
+            chks.forEach(cb => {
+                const sId = cb.getAttribute('data-srv');
+                const cId = cb.getAttribute('data-cat');
+                if(globalAppData.servers[sId] && globalAppData.servers[sId].categories[cId]) {
+                    if(type === 'delete') {
+                        delete globalAppData.servers[sId].categories[cId];
+                        globalAppData.servers[sId].channels = globalAppData.servers[sId].channels.filter(ch => ch.catId != cId);
+                    } else {
+                        globalAppData.servers[sId].categories[cId].visible = (type === 'show');
+                    }
+                }
             });
+
+            db.ref('tody_multi_stream_data').set(globalAppData);
+            if(type === 'delete') backToCats();
         }
 
-        function deleteSelectedCats() {
-            const checked = document.querySelectorAll('.cat-del-chk:checked'); if(checked.length === 0) return alert("حدد مجلداً أولاً!");
-            if(confirm("حذف المجلدات المحددة؟")) {
-                checked.forEach(cb => globalAppData.categories[cb.value].visible = false);
-                backToCats(); db.ref('tody_stream_data').set(globalAppData);
-            }
-        }
-
-        function deleteSingleChannel(chanId) {
-            if(confirm("هل أنت متأكد من حذف هذه القناة نهائياً؟")) {
-                const idx = globalAppData.channels.findIndex(ch => ch.id == chanId);
-                if(idx !== -1) { globalAppData.channels[idx].visible = false; db.ref('tody_stream_data').set(globalAppData); }
-            }
-        }
-
-        // 🛡️ [بروتوكول الإرسال الخارجي القسري المطور]: إجبار التطبيقات والـ WebView على قذف الرابط للمشغلات
-        let hls = null;
+        // بروتوكول التشغيل القسري لضمان أقصى بفرة واستقرار بدون تقطيع
         function playStream(url) {
-            // تنبيه المستخدم داخل التطبيق
-            alert("⚠️ سيتم تحويلك الآن للمشغل الخارجي تلقائياً...");
-
-            // فحص نوع الجهاز (إذا كان أندرويد) لإرسال أمر عميق للنظام (Intent)
-            const isAndroid = /Android/i.test(navigator.userAgent);
-
-            if (isAndroid) {
-                // تصفية الرابط من بروتوكول http لدمجه في أمر الأندرويد
+            alert("تحويل للمشغل الخارجي المستقر...");
+            
+            // صياغة روابط مشغلات متقدمة لتفعيل البفرة القصوى واستهلاك منخفض للشبكة وضمان الفتح الفوري
+            if (/Android/i.test(navigator.userAgent)) {
                 const cleanUrl = url.replace("http://", "").replace("https://", "");
                 
-                // حيلة إجبار الهاتف على فتح الرابط عبر تطبيق VLC مباشرة وبثبات تام
-                const vlcIntent = `intent://${cleanUrl}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;end`;
+                // بروتوكول VLC القسري المزود بأوامر زيادة حجم البفرة (Network Caching) وثبات الاستقبال الإذاعي المتدفق
+                const vlcIntent = `intent://${cleanUrl}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=TOD-Y%20Stream;i.network-caching=8000;end`;
                 
-                // نقوم بفتح الرابط عبر بيئة الأندرويد القسرية
                 window.location.href = vlcIntent;
             } else {
-                // للهواتف الأخرى والكمبيوتر: فتح الرابط مباشرة في المتصفح الخارجي
                 window.location.href = url;
             }
-            return;
         }
 
         function closePlayer() {
             const video = document.getElementById('videoPlayer');
-            video.pause();
-            if (hls) { hls.destroy(); hls = null; }
-            video.src = "";
+            video.pause(); video.src = "";
             document.getElementById('player-container').style.display = 'none';
         }
     </script>
