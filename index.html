@@ -12,32 +12,34 @@ const oM=id=>$(id).style.display='flex',cM=id=>$(id).style.display='none';
 const vC=()=>{if($('sC').value==="V555"){alert("مرحباً بك! للاستخدام الإداري يرجى فتح ملف لوحة المطور المستقل.");cM('aM');$('sC').value="";}else alert("خطأ!");};
 const gH=()=>{v="s";aSId=aCId=null;rUI();},gB=()=>{if(v==="c"){v="cat"}else if(v==="cat"){v="s";aSId=null}rUI();};
 
-// دالة توليد صفحة مستقلة مشفرة داخلياً تحتوي على مشغل احترافي فائق الثبات ومقاوم لضعف الإنترنت
-function openGeneratedWindowsPlayer(url, name) {
-    let playerCode = `
+// دالة التشغيل المتوافقة تماماً مع بيئة رفع سيرفرات GitHub Pages والأمان العالي للمتصفحات
+function openGithubPagesFriendlyPlayer(url, name) {
+    // حل المشكلة الأولى: إجبار تحويل الرابط إلى https إذا تم فتح الموقع من رابط جيتهاب المشفر منعاً للـ Mixed Content حظر المتصفح
+    if (window.location.protocol === 'https:' && url.startsWith('http://')) {
+        url = url.replace('http://', 'https://');
+    }
+
+    let playerHTML = `
         <!DOCTYPE html>
         <html lang="ar" dir="rtl">
         <head>
             <meta charset="UTF-8">
-            <title>TOD-Y Premium Player - ${name}</title>
+            <title>TOD-Y Player - ${name}</title>
             <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"><\/script>
             <style>
-                body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #06090e; font-family: sans-serif; overflow: hidden; display: flex; flex-direction: column; }
-                .player-header { background: #0b0f17; padding: 12px 20px; border-bottom: 1px solid #1a2233; color: #00e676; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-                .video-wrapper { flex: 1; width: 100%; height: 100%; background: #000; position: relative; }
-                /* تخصيص مظهر أزرار Clappr لتبدو أكثر عصرية وفخامة */
-                .clappr-player { font-family: sans-serif !important; }
-                .player-poster { background-size: contain !important; }
+                body, html { margin:0; padding:0; width:100%; height:100%; background:#06090e; font-family:sans-serif; overflow:hidden; display:flex; flex-direction:column; }
+                .top-bar { background:#0b0f17; padding:12px 20px; color:#00e676; font-size:14px; font-weight:bold; border-bottom:1px solid #1a2233; display:flex; justify-content:space-between; align-items:center; }
+                .p-wrap { flex:1; width:100%; background:#000; position:relative; }
+                .clappr-player { width:100%!important; height:100%!important; }
             </style>
         </head>
         <body>
-            <div class="player-header">
+            <div class="top-bar">
                 <div>📺 قناة: ${name}</div>
-                <div style="color: #8b9bb4; font-size: 11px; font-weight: normal;">الوضع الاحترافي عالي الاستقرار</div>
+                <div style="color:#8b9bb4; font-size:11px; font-weight:normal;">TOD-Y Premium Bypass Mode</div>
             </div>
-            <div class="video-wrapper" id="player"></div>
+            <div class="p-wrap" id="player"></div>
             <script>
-                // بناء المشغل بالاعتماد على خوارزميات كاش قوية لمنع التقطيع عند ضعف الإنترنت
                 var player = new Clappr.Player({
                     source: "${url}",
                     parentId: "#player",
@@ -48,14 +50,11 @@ function openGeneratedWindowsPlayer(url, name) {
                     preload: "auto",
                     hlsPlayback: {
                         preload: true,
-                        // إعدادات التخزين المؤقت المتقدمة لامتصاص ضعف الإنترنت ومنع الـ Freeze
-                        maxBufferLength: 45, 
-                        maxMaxBufferLength: 90,
-                        lowLatencyMode: false
+                        maxBufferLength: 40,
+                        maxMaxBufferLength: 80
                     },
                     playback: {
-                        playInline: true,
-                        recycleVideo: true
+                        playInline: true
                     }
                 });
             <\/script>
@@ -63,14 +62,27 @@ function openGeneratedWindowsPlayer(url, name) {
         </html>
     `;
 
-    // تحويل الكود البرمجي بالكامل إلى رابط Data URI مشفر بصيغة Base64 لتجنب أي قيود أمنية من المتصفح
-    let blob = new Blob([playerCode], { type: 'text/html;charset=utf-8' });
-    let playerUrl = URL.createObjectURL(blob);
-
-    // إطلاق الصفحة المولدة فوراً في علامة تبويب جديدة مستقلة ونظيفة
-    window.open(playerUrl, "_blank");
+    // حل المشكلة الثانية (الحيلة الكبرى): فتح نافذة مستقلة فارغة لكسر بروتوكول نطاق جيتهاب الصارم وكتابة الكود بداخلها مباشرة
+    let w = 840, h = 500;
+    let left = (screen.width/2)-(w/2), top = (screen.height/2)-(h/2);
+    
+    let pWin = window.open("", "_blank", `width=${w},height=${h},top=${top},left=${left},scrollbars=no,menubar=no,status=no,toolbar=no,location=no,resizable=yes`);
+    
+    if(pWin) {
+        pWin.document.open();
+        pWin.document.write(playerHTML);
+        pWin.document.close();
+    } else {
+        // إذا حظر المتصفح النافذة المنبثقة، نفتحها كعلامة تبويب عادية بديلة لمنع الفشل
+        let fallbackWin = window.open();
+        if(fallbackWin) {
+            fallbackWin.document.open();
+            fallbackWin.document.write(playerHTML);
+            fallbackWin.document.close();
+        }
+    }
 }
 
-function rUI(){let c=$('aC');c.innerHTML="";let hD=!1;if(v==="s"){c.innerHTML=`<div class="st">سيرفرات Xtream المتاحة</div>`;let g=document.createElement('div');g.className='gl';for(let i in gD.servers){let s=gD.servers[i];if(s.visible===!1)continue;hD=!0;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aSId=i;v="cat";rUI()};d.innerHTML=`<div class="cih"><div class="fi si"></div></div><div class="ct">${s.name||s.user}</div>`;g.appendChild(d)}c.appendChild(g);if(!hD)c.innerHTML=`<div class="st" style="display:block;text-align:center">لا توجد سيرفرات مضافة حالياً.</div>`}else if(v==="cat"){let s=gD.servers[aSId];if(!s||s.visible===!1)return gB();c.innerHTML=`<div class="st"><span>${s.name||s.user} 📁 المجلدات</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';for(let i in s.categories){let cat=s.categories[i];if(cat.visible===!1)continue;let cnt=s.channels.filter(ch=>ch.catId==i&&ch.visible!==!1).length;if(cnt===0)continue;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aCId=i;v="c";rUI()};d.innerHTML=`<div class="cih"><div class="fi"></div></div><div class="ct">${cat.name}<br><span style="color:var(--mu);font-size:10px">${cnt} قناة</span></div>`;g.appendChild(d)}c.appendChild(g)}else if(v==="c"){let s=gD.servers[aSId];if(!s||s.visible===!1||!s.categories[aCId])return gB();c.innerHTML=`<div class="st"><span>${s.categories[aCId].name}</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';s.channels.filter(ch=>ch.catId==aCId&&ch.visible!==!1).forEach(ch=>{let d=document.createElement('div');d.className='cd';d.onclick=()=>{let u=ch.url;/Android/i.test(navigator.userAgent)?window.location.href=`intent://${u.replace(/https?:\/\//,"")}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=${encodeURIComponent(ch.name)};i.network-caching=10000;i.clock-jitter=0;B.prefer-hw-decoding=true;end`:openGeneratedWindowsPlayer(u, ch.name);};let img=ch.icon.startsWith('http')?`<img src="${ch.icon}" style="width:100%;height:50px;object-fit:contain">`:`<div style="font-size:11px;color:var(--ac);padding:10px 0">بث</div>`;d.innerHTML=`<div class="cih">${img}</div><div class="ct">${ch.name}</div>`;g.appendChild(d)});c.appendChild(g)}}
+function rUI(){let c=$('aC');c.innerHTML="";let hD=!1;if(v==="s"){c.innerHTML=`<div class="st">سيرفرات Xtream المتاحة</div>`;let g=document.createElement('div');g.className='gl';for(let i in gD.servers){let s=gD.servers[i];if(s.visible===!1)continue;hD=!0;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aSId=i;v="cat";rUI()};d.innerHTML=`<div class="cih"><div class="fi si"></div></div><div class="ct">${s.name||s.user}</div>`;g.appendChild(d)}c.appendChild(g);if(!hD)c.innerHTML=`<div class="st" style="display:block;text-align:center">لا توجد سيرفرات مضافة حالياً.</div>`}else if(v==="cat"){let s=gD.servers[aSId];if(!s||s.visible===!1)return gB();c.innerHTML=`<div class="st"><span>${s.name||s.user} 📁 المجلدات</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';for(let i in s.categories){let cat=s.categories[i];if(cat.visible===!1)continue;let cnt=s.channels.filter(ch=>ch.catId==i&&ch.visible!==!1).length;if(cnt===0)continue;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aCId=i;v="c";rUI()};d.innerHTML=`<div class="cih"><div class="fi"></div></div><div class="ct">${cat.name}<br><span style="color:var(--mu);font-size:10px">${cnt} قناة</span></div>`;g.appendChild(d)}c.appendChild(g)}else if(v==="c"){let s=gD.servers[aSId];if(!s||s.visible===!1||!s.categories[aCId])return gB();c.innerHTML=`<div class="st"><span>${s.categories[aCId].name}</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';s.channels.filter(ch=>ch.catId==aCId&&ch.visible!==!1).forEach(ch=>{let d=document.createElement('div');d.className='cd';d.onclick=()=>{let u=ch.url;/Android/i.test(navigator.userAgent)?window.location.href=`intent://${u.replace(/https?:\/\//,"")}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=${encodeURIComponent(ch.name)};i.network-caching=10000;i.clock-jitter=0;B.prefer-hw-decoding=true;end`:openGithubPagesFriendlyPlayer(u, ch.name);};let img=ch.icon.startsWith('http')?`<img src="${ch.icon}" style="width:100%;height:50px;object-fit:contain">`:`<div style="font-size:11px;color:var(--ac);padding:10px 0">بث</div>`;d.innerHTML=`<div class="cih">${img}</div><div class="ct">${ch.name}</div>`;g.appendChild(d)});c.appendChild(g)}}
 </script>
 </body></html>
