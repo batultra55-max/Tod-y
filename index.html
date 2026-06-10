@@ -1,61 +1,76 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>TOD-Y - الواجهة الرئيسية</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script><script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script><style>:root{--bg:#06090e;--cd:#111622;--ac:#00e676;--tx:#fff;--mu:#8b9bb4;--dg:#e61e50;--pr:#24314b}*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:var(--bg);color:var(--tx);overflow-x:hidden}.nb{display:flex;justify-content:space-between;align-items:center;padding:12px 4%;background:#0b0f17;border-bottom:1px solid #1a2233;position:sticky;top:0;z-index:100}.lg{font-size:22px;font-weight:900;cursor:pointer}.lg span{color:var(--ac)}.mb{font-size:24px;cursor:pointer}.mc{padding:15px 4%;max-width:1600px;margin:0 auto}.st{font-size:17px;margin:15px 0;display:flex;justify-content:space-between;align-items:center}.bb{font-size:12px;background:var(--pr);padding:4px 8px;border-radius:4px;cursor:pointer;color:var(--ac)}.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}@media(min-width:768px){.gl{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}.fi{width:45px;height:32px;background:#ffe082;border-radius:0 4px 4px 4px;position:relative;margin:0 auto}.fi::before{content:'';width:18px;height:6px;background:inherit;border-radius:3px 3px 0 0;position:absolute;top:-6px;left:0}.si{background:#4caf50}.cd{background:var(--cd);border-radius:8px;overflow:hidden;border:1px solid #1a2233;transition:.15s;cursor:pointer;text-align:center;padding:12px 6px}.cd:hover{border-color:var(--ac);transform:translateY(-2px)}.cih{width:100%;height:50px;display:flex;align-items:center;justify-content:center}.ct{padding-top:8px;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}.md{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(4,6,10,.85);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(4px);padding:15px}.mdc{background:var(--cd);border:1px solid #24314b;padding:20px;border-radius:8px;width:100%;max-width:550px}input{width:100%;padding:8px;background:#0b0f17;border:1px solid #1a2233;border-radius:4px;color:#fff;margin-bottom:8px;font-size:13px}input:focus{border-color:var(--ac);outline:0}.btn{width:100%;padding:8px;border:0;border-radius:4px;font-weight:700;cursor:pointer;margin-bottom:4px;font-size:13px}.bp{background:var(--ac);color:#000}.bs{background:var(--pr);color:#fff}.ld-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:12px}.sp{width:36px;height:36px;border:3px solid #1a2233;border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}/* تصميم شاشة المشغل المدمج الفاخر للويندوز */.p-md{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#06090ea8;z-index:2000;backdrop-filter:blur(10px);justify-content:center;align-items:center;padding:10px}.p-mdc{background:#0b0f17;border:1px solid #1a2233;width:100%;max-width:880px;border-radius:12px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.7)}.p-hd{padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1a2233;color:var(--ac);font-weight:bold;font-size:15px}.p-close{background:var(--dg);color:#fff;border:0;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;transition:0.2s}.p-close:hover{background:#ff3366}.p-body{width:100%;aspect-ratio:16/9;background:#000}</style></head>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>TOD-Y - الواجهة الرئيسية</title><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script><script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script><style>:root{--bg:#06090e;--cd:#111622;--ac:#00e676;--tx:#fff;--mu:#8b9bb4;--dg:#e61e50;--pr:#24314b}*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}body{background:var(--bg);color:var(--tx);overflow-x:hidden}.nb{display:flex;justify-content:space-between;align-items:center;padding:12px 4%;background:#0b0f17;border-bottom:1px solid #1a2233;position:sticky;top:0;z-index:100}.lg{font-size:22px;font-weight:900;cursor:pointer}.lg span{color:var(--ac)}.mb{font-size:24px;cursor:pointer}.mc{padding:15px 4%;max-width:1600px;margin:0 auto}.st{font-size:17px;margin:15px 0;display:flex;justify-content:space-between;align-items:center}.bb{font-size:12px;background:var(--pr);padding:4px 8px;border-radius:4px;cursor:pointer;color:var(--ac)}.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}@media(min-width:768px){.gl{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}}.fi{width:45px;height:32px;background:#ffe082;border-radius:0 4px 4px 4px;position:relative;margin:0 auto}.fi::before{content:'';width:18px;height:6px;background:inherit;border-radius:3px 3px 0 0;position:absolute;top:-6px;left:0}.si{background:#4caf50}.cd{background:var(--cd);border-radius:8px;overflow:hidden;border:1px solid #1a2233;transition:.15s;cursor:pointer;text-align:center;padding:12px 6px}.cd:hover{border-color:var(--ac);transform:translateY(-2px)}.cih{width:100%;height:50px;display:flex;align-items:center;justify-content:center}.ct{padding-top:8px;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}.md{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(4,6,10,.85);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(4px);padding:15px}.mdc{background:var(--cd);border:1px solid #24314b;padding:15px;border-radius:8px;width:100%;max-width:550px}input{width:100%;padding:8px;background:#0b0f17;border:1px solid #1a2233;border-radius:4px;color:#fff;margin-bottom:8px;font-size:13px}input:focus{border-color:var(--ac);outline:0}.btn{width:100%;padding:8px;border:0;border-radius:4px;font-weight:700;cursor:pointer;margin-bottom:4px;font-size:13px}.bp{background:var(--ac);color:#000}.bs{background:var(--pr);color:#fff}.ld-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0;gap:12px}.sp{width:36px;height:36px;border:3px solid #1a2233;border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}</style></head>
 <body>
 <div class="nb"><div class="lg" onclick="gH()">TOD-<span>Y</span></div><div class="mb" onclick="oM('aM')">☰</div></div>
 <div class="mc" id="aC"><div class="ld-box"><div class="sp"></div><div style="font-size:14px;color:var(--mu)">جاري المزامنة</div></div></div>
-
 <div class="md" id="aM"><div class="mdc"><h3 style="margin-bottom:8px;color:var(--ac)">الوضع الآمن</h3><input type="password" id="sC" placeholder="الرمز"><button class="btn bp" onclick="vC()">دخول</button><button class="btn bs" onclick="cM('aM')">إلغاء</button></div></div>
-
-<div class="p-md" id="internalPlayerModal"><div class="p-mdc">
-    <div class="p-hd">
-        <div id="pChannelTitle">📺 جاري تشغيل القناة...</div>
-        <button class="p-close" onclick="closeInternalPlayer()">إغلاق البث ✕</button>
-    </div>
-    <div class="p-body" id="playerContainer"></div>
-</div></div>
-
 <script>
 firebase.initializeApp({databaseURL:"https://yall-taoaqo3-default-rtdb.firebaseio.com/"});
 const db=firebase.database(),$=id=>document.getElementById(id);
 let gD={servers:{}},v="s",aCId=null,aSId=null;
-let clapprPlayerInstance = null;
-
 window.onload=()=>{db.ref('tody_multi_stream_data').on('value',s=>{gD=s.val()?.servers?s.val():{servers:{}};rUI();},e=>{$('aC').innerHTML=`<div class="st" style="text-align:center;display:block">خطأ في جلب بيانات الشبكة.</div>`})};
 const oM=id=>$(id).style.display='flex',cM=id=>$(id).style.display='none';
 const vC=()=>{if($('sC').value==="V555"){alert("مرحباً بك! للاستخدام الإداري يرجى فتح ملف لوحة المطور المستقل.");cM('aM');$('sC').value="";}else alert("خطأ!");};
 const gH=()=>{v="s";aSId=aCId=null;rUI();},gB=()=>{if(v==="c"){v="cat"}else if(v==="cat"){v="s";aSId=null}rUI();};
 
-// دالة تشغيل البث داخلياً في الويندوز باستخدام محرك Clappr المرن جداً ضد قيود السيرفرات
-function openInternalPlayer(url, name) {
-    $('pChannelTitle').innerText = `🔴 بث مباشر: ${name}`;
-    $('internalPlayerModal').style.display = 'flex';
-    $('playerContainer').innerHTML = ""; // تنظيف الحاوية
+// دالة توليد صفحة مستقلة مشفرة داخلياً تحتوي على مشغل احترافي فائق الثبات ومقاوم لضعف الإنترنت
+function openGeneratedWindowsPlayer(url, name) {
+    let playerCode = `
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>TOD-Y Premium Player - ${name}</title>
+            <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"><\/script>
+            <style>
+                body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #06090e; font-family: sans-serif; overflow: hidden; display: flex; flex-direction: column; }
+                .player-header { background: #0b0f17; padding: 12px 20px; border-bottom: 1px solid #1a2233; color: #00e676; font-size: 14px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+                .video-wrapper { flex: 1; width: 100%; height: 100%; background: #000; position: relative; }
+                /* تخصيص مظهر أزرار Clappr لتبدو أكثر عصرية وفخامة */
+                .clappr-player { font-family: sans-serif !important; }
+                .player-poster { background-size: contain !important; }
+            </style>
+        </head>
+        <body>
+            <div class="player-header">
+                <div>📺 قناة: ${name}</div>
+                <div style="color: #8b9bb4; font-size: 11px; font-weight: normal;">الوضع الاحترافي عالي الاستقرار</div>
+            </div>
+            <div class="video-wrapper" id="player"></div>
+            <script>
+                // بناء المشغل بالاعتماد على خوارزميات كاش قوية لمنع التقطيع عند ضعف الإنترنت
+                var player = new Clappr.Player({
+                    source: "${url}",
+                    parentId: "#player",
+                    width: "100%",
+                    height: "100%",
+                    autoPlay: true,
+                    mute: false,
+                    preload: "auto",
+                    hlsPlayback: {
+                        preload: true,
+                        // إعدادات التخزين المؤقت المتقدمة لامتصاص ضعف الإنترنت ومنع الـ Freeze
+                        maxBufferLength: 45, 
+                        maxMaxBufferLength: 90,
+                        lowLatencyMode: false
+                    },
+                    playback: {
+                        playInline: true,
+                        recycleVideo: true
+                    }
+                });
+            <\/script>
+        </body>
+        </html>
+    `;
 
-    // بناء وتوليد المشغل فوراً داخل الصفحة
-    clapprPlayerInstance = new Clappr.Player({
-        source: url,
-        parentId: "#playerContainer",
-        width: "100%",
-        height: "100%",
-        autoPlay: true,
-        mute: false,
-        preload: "auto",
-        playback: {
-            playInline: true,
-            hlsMinimumDvrSize: 60
-        },
-        chromecast: true
-    });
+    // تحويل الكود البرمجي بالكامل إلى رابط Data URI مشفر بصيغة Base64 لتجنب أي قيود أمنية من المتصفح
+    let blob = new Blob([playerCode], { type: 'text/html;charset=utf-8' });
+    let playerUrl = URL.createObjectURL(blob);
+
+    // إطلاق الصفحة المولدة فوراً في علامة تبويب جديدة مستقلة ونظيفة
+    window.open(playerUrl, "_blank");
 }
 
-// دالة تدمير المشغل وإغلاق اللوحة لضمان إيقاف سحب البيانات من السيرفر فوراً عند الإغلاق
-function closeInternalPlayer() {
-    if (clapprPlayerInstance) {
-        clapprPlayerInstance.destroy();
-        clapprPlayerInstance = null;
-    }
-    $('internalPlayerModal').style.display = 'none';
-}
-
-function rUI(){let c=$('aC');c.innerHTML="";let hD=!1;if(v==="s"){c.innerHTML=`<div class="st">سيرفرات Xtream المتاحة</div>`;let g=document.createElement('div');g.className='gl';for(let i in gD.servers){let s=gD.servers[i];if(s.visible===!1)continue;hD=!0;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aSId=i;v="cat";rUI()};d.innerHTML=`<div class="cih"><div class="fi si"></div></div><div class="ct">${s.name||s.user}</div>`;g.appendChild(d)}c.appendChild(g);if(!hD)c.innerHTML=`<div class="st" style="display:block;text-align:center">لا توجد سيرفرات مضافة حالياً.</div>`}else if(v==="cat"){let s=gD.servers[aSId];if(!s||s.visible===!1)return gB();c.innerHTML=`<div class="st"><span>${s.name||s.user} 📁 المجلدات</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';for(let i in s.categories){let cat=s.categories[i];if(cat.visible===!1)continue;let cnt=s.channels.filter(ch=>ch.catId==i&&ch.visible!==!1).length;if(cnt===0)continue;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aCId=i;v="c";rUI()};d.innerHTML=`<div class="cih"><div class="fi"></div></div><div class="ct">${cat.name}<br><span style="color:var(--mu);font-size:10px">${cnt} قناة</span></div>`;g.appendChild(d)}c.appendChild(g)}else if(v==="c"){let s=gD.servers[aSId];if(!s||s.visible===!1||!s.categories[aCId])return gB();c.innerHTML=`<div class="st"><span>${s.categories[aCId].name}</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';s.channels.filter(ch=>ch.catId==aCId&&ch.visible!==!1).forEach(ch=>{let d=document.createElement('div');d.className='cd';d.onclick=()=>{let u=ch.url;/Android/i.test(navigator.userAgent)?window.location.href=`intent://${u.replace(/https?:\/\//,"")}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=${encodeURIComponent(ch.name)};i.network-caching=10000;i.clock-jitter=0;B.prefer-hw-decoding=true;end`:openInternalPlayer(u, ch.name);};let img=ch.icon.startsWith('http')?`<img src="${ch.icon}" style="width:100%;height:50px;object-fit:contain">`:`<div style="font-size:11px;color:var(--ac);padding:10px 0">بث</div>`;d.innerHTML=`<div class="cih">${img}</div><div class="ct">${ch.name}</div>`;g.appendChild(d)});c.appendChild(g)}}
+function rUI(){let c=$('aC');c.innerHTML="";let hD=!1;if(v==="s"){c.innerHTML=`<div class="st">سيرفرات Xtream المتاحة</div>`;let g=document.createElement('div');g.className='gl';for(let i in gD.servers){let s=gD.servers[i];if(s.visible===!1)continue;hD=!0;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aSId=i;v="cat";rUI()};d.innerHTML=`<div class="cih"><div class="fi si"></div></div><div class="ct">${s.name||s.user}</div>`;g.appendChild(d)}c.appendChild(g);if(!hD)c.innerHTML=`<div class="st" style="display:block;text-align:center">لا توجد سيرفرات مضافة حالياً.</div>`}else if(v==="cat"){let s=gD.servers[aSId];if(!s||s.visible===!1)return gB();c.innerHTML=`<div class="st"><span>${s.name||s.user} 📁 المجلدات</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';for(let i in s.categories){let cat=s.categories[i];if(cat.visible===!1)continue;let cnt=s.channels.filter(ch=>ch.catId==i&&ch.visible!==!1).length;if(cnt===0)continue;let d=document.createElement('div');d.className='cd';d.onclick=()=>{aCId=i;v="c";rUI()};d.innerHTML=`<div class="cih"><div class="fi"></div></div><div class="ct">${cat.name}<br><span style="color:var(--mu);font-size:10px">${cnt} قناة</span></div>`;g.appendChild(d)}c.appendChild(g)}else if(v==="c"){let s=gD.servers[aSId];if(!s||s.visible===!1||!s.categories[aCId])return gB();c.innerHTML=`<div class="st"><span>${s.categories[aCId].name}</span><span class="bb" onclick="gB()">عودة</span></div>`;let g=document.createElement('div');g.className='gl';s.channels.filter(ch=>ch.catId==aCId&&ch.visible!==!1).forEach(ch=>{let d=document.createElement('div');d.className='cd';d.onclick=()=>{let u=ch.url;/Android/i.test(navigator.userAgent)?window.location.href=`intent://${u.replace(/https?:\/\//,"")}#Intent;scheme=http;package=org.videolan.vlc;type=video/*;S.title=${encodeURIComponent(ch.name)};i.network-caching=10000;i.clock-jitter=0;B.prefer-hw-decoding=true;end`:openGeneratedWindowsPlayer(u, ch.name);};let img=ch.icon.startsWith('http')?`<img src="${ch.icon}" style="width:100%;height:50px;object-fit:contain">`:`<div style="font-size:11px;color:var(--ac);padding:10px 0">بث</div>`;d.innerHTML=`<div class="cih">${img}</div><div class="ct">${ch.name}</div>`;g.appendChild(d)});c.appendChild(g)}}
 </script>
 </body></html>
